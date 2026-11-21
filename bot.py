@@ -320,7 +320,7 @@ class Bot:
             if tick >= self.flip_at:
                 self.strafe = -self.strafe
                 self.flip_at = tick + self.rng.randint(6, 14)
-            if hpf < 0.4 or nf >= 3:
+            if hpf < 0.5 or nf >= 2:
                 mode = "flee"
                 add(away, 2.0)
                 add((dcx, dcy), 0.8)
