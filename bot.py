@@ -17,6 +17,7 @@ CELL = 2.0
 
 # ---- experiment switches: set one to False to test without it
 FLEE_HP, FLEE_N = 0.3, 4    # the 2.79 setting (never flee scored 2.6)
+GUN_IDEAL = 90.0           # preferred fight range with the gun (was 50)
 DUAL_FIRE = True           # fire the gun at the same time as a laser/lightning
 USE_DROPS = True           # False = ignore supply drops (that scored 2.69, worse than 2.79)
 JUMP_FIGHT = False         # jump while fighting/fleeing
@@ -338,7 +339,7 @@ class Bot:
                 boost = me["energy"] > 40
             else:
                 mode = "fight"
-                ideal = 50.0
+                ideal = GUN_IDEAL
                 have = {w["kind"] for w in me["weapons"] if w}
                 if "lightning" in have:
                     ideal = 22.0 if LIGHTNING_FIRST else 28.0
