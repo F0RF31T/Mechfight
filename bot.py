@@ -17,10 +17,11 @@ CELL = 2.0
 
 # ---- experiment switches: set one to False to test without it
 FLEE_HP, FLEE_N = 0.3, 4    # the 2.79 setting (never flee scored 2.6)
+DUAL_FIRE = True           # fire the gun at the same time as a laser/lightning
 USE_DROPS = True           # False = ignore supply drops (that scored 2.69, worse than 2.79)
 JUMP_FIGHT = False         # jump while fighting/fleeing
 LIGHTNING_FIRST = False   # prefer lightning over laser, and close in to ~22 m when holding it
-CUBE_FARM = True           # chase cubes, drones and crates from further away
+CUBE_FARM = False          # chase cubes, drones and crates from further away
 CUBE_RANGE = 140 if CUBE_FARM else 80
 FARM_RANGE = 90 if CUBE_FARM else 55
 TAU = math.tau
@@ -484,6 +485,13 @@ class Bot:
                         fire[slot] = eyaw < 0.35
                     else:
                         fire[slot] = ok and (kind_t != "mech-nolos" or k == "mortar") and (k != "mortar" or D > 18)
+                    if DUAL_FIRE and k in ("laser", "lightning") and kind_t != "mech-nolos":
+                        for gi, gw in enumerate(ws):
+                            if gw and gw["kind"] == "gun" and gw.get("ammo", 0) > 0 and gw.get("reload", 0) <= 0 \
+                                    and gw["cooldown"] <= 0.05 and D < gw["stats"].get("range", 230) * 0.8:
+                                gs = self.solve("gun", me, target, gw["stats"])
+                                if gs and abs(wrap(me["aim"][0] - gs[0])) < tol and abs(me["aim"][1] - gs[1]) < tol * 1.5:
+                                    fire[gi] = True
         if aim is None:
             if tick - self.hit_tick < 12 and self.hit_bearing is not None:
                 aim = [self.hit_bearing, 0.0]
