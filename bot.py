@@ -19,8 +19,8 @@ CELL = 2.0
 FLEE_HP, FLEE_N = 0.3, 4    # the 2.79 setting (never flee scored 2.6)
 USE_DROPS = True           # False = ignore supply drops (that scored 2.69, worse than 2.79)
 JUMP_FIGHT = False         # jump while fighting/fleeing
-LIGHTNING_FIRST = True     # prefer lightning over laser, and close in to ~22 m when holding it
-CUBE_FARM = False          # chase cubes, drones and crates from further away
+LIGHTNING_FIRST = False   # prefer lightning over laser, and close in to ~22 m when holding it
+CUBE_FARM = True           # chase cubes, drones and crates from further away
 CUBE_RANGE = 140 if CUBE_FARM else 80
 FARM_RANGE = 90 if CUBE_FARM else 55
 TAU = math.tau
