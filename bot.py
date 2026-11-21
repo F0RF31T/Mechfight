@@ -16,7 +16,8 @@ import mechfight as mf
 CELL = 2.0
 
 # ---- experiment switches: set one to False to test without it
-FLEE_HP, FLEE_N = 0.0, 99   # never flee (2.79 was 0.3, 4)
+FLEE_HP, FLEE_N = 0.3, 4    # the 2.79 setting (never flee scored 2.6)
+USE_DROPS = False          # False = ignore supply drops
 JUMP_FIGHT = False         # jump while fighting/fleeing
 LIGHTNING_FIRST = False    # prefer lightning over laser, and close in to ~22 m when holding it
 CUBE_FARM = False          # chase cubes, drones and crates from further away
@@ -350,7 +351,7 @@ class Bot:
         else:
             # nothing hostile around: loot, capture drops, or wait inside the circle
             goal, gw = None, 0
-            for d in obs["drops"]:
+            for d in (obs["drops"] if USE_DROPS else []):
                 dd = math.hypot(d["pos"][0] - x, d["pos"][1] - y)
                 if dd < 150 and math.hypot(d["pos"][0] - zc[0], d["pos"][1] - zc[1]) < zr + 10:
                     if dd > d["radius"] * 0.5 or d["lands_in"] > 0:
