@@ -17,7 +17,7 @@ CELL = 2.0
 
 # ---- experiment switches: set one to False to test without it
 FLEE_HP, FLEE_N = 0.3, 4    # the 2.79 setting (never flee scored 2.6)
-USE_DROPS = False          # False = ignore supply drops
+USE_DROPS = True           # False = ignore supply drops (that scored 2.69, worse than 2.79)
 JUMP_FIGHT = False         # jump while fighting/fleeing
 LIGHTNING_FIRST = False    # prefer lightning over laser, and close in to ~22 m when holding it
 CUBE_FARM = False          # chase cubes, drones and crates from further away
@@ -25,7 +25,7 @@ CUBE_RANGE = 140 if CUBE_FARM else 80
 FARM_RANGE = 90 if CUBE_FARM else 55
 TAU = math.tau
 WEAPON_VALUE = {"gun": 0.0, "mortar": 1.5, "lightning": 3.0 if LIGHTNING_FIRST else 2.5, "laser": 2.5 if LIGHTNING_FIRST else 3.0}
-UPGRADE_PRIORITY = ["armor", "plating", "nanites", "servos", "gyros", "gun_damage", "gun_rate",
+UPGRADE_PRIORITY = ["plating", "armor", "nanites", "servos", "gyros", "gun_damage", "gun_rate",
                     "laser_damage", "laser_charge", "lightning_chain", "capacitor", "reactor", "jets",
                     "gun_mag", "gun_velocity", "mortar_splash", "sensors"]
 
