@@ -137,6 +137,7 @@ class Bot:
         self.hit_bearing = None
         self.hit_tick = -999
         self.walk = self.cfg["mech"]["walk_speed"]
+        self.last_mode = None
 
     # ---- helpers
     def los(self, p, q):
@@ -237,6 +238,19 @@ class Bot:
             if g.get("ammo", 0) > 0 and g.get("reload", 0) <= 0 and d < g["stats"].get("range", 230) * 0.8:
                 return have["gun"][0], "gun"
         return None
+
+    def trace(self, obs, me, mode, foes, dc, safe):
+        """One short stderr line on damage, mode change, and every 5 s. The last lines of a match show how we died."""
+        try:
+            dmg = [f"{e['weapon']}-{e['amount']:.0f}{'R' if e.get('rear') else ''}@{e['by']}" for e in obs['events'] if e['type'] == 'damaged']
+            if dmg or mode != self.last_mode or obs['tick'] % 50 == 0:
+                wp = ','.join(w['kind'] for w in me['weapons'] if w)
+                mf.log(f"t={obs['t']:.1f} alive={obs['alive']} hp={me['hp']:.0f}/{me['max_hp']:.0f} mode={mode} "
+                       f"zone={'in' if me['in_zone'] else 'OUT'} dc={dc:.0f}/{safe:.0f} foes={len(foes)} "
+                       f"w={wp} cubes={me['cubes']} dmg={dmg}")
+            self.last_mode = mode
+        except Exception:
+            pass
 
     # ---- main decision
     def act(self, obs):
@@ -484,6 +498,7 @@ class Bot:
                     act["drop"] = 1
                 break
 
+        self.trace(obs, me, mode, foes, dc, safe)
         mf.draw.label(f"{mode} hp{me['hp']:.0f} f{len(foes)}")
         if target is not None:
             mf.draw.line([x, y, z + 7], [target["pos"][0], target["pos"][1], target["pos"][2] + 4.5], "#ff5040")
