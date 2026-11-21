@@ -16,10 +16,10 @@ import mechfight as mf
 CELL = 2.0
 
 # ---- experiment switches: set one to False to test without it
-FLEE_HP, FLEE_N = 0.3, 4   # the 2.79 setting
-JUMP_FIGHT = True          # jump while fighting/fleeing
-LIGHTNING_FIRST = True     # prefer lightning over laser, and close in to ~22 m when holding it
-CUBE_FARM = True           # chase cubes, drones and crates from further away
+FLEE_HP, FLEE_N = 0.0, 99   # never flee (2.79 was 0.3, 4)
+JUMP_FIGHT = False         # jump while fighting/fleeing
+LIGHTNING_FIRST = False    # prefer lightning over laser, and close in to ~22 m when holding it
+CUBE_FARM = False          # chase cubes, drones and crates from further away
 CUBE_RANGE = 140 if CUBE_FARM else 80
 FARM_RANGE = 90 if CUBE_FARM else 55
 TAU = math.tau
