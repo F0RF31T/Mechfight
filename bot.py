@@ -17,7 +17,7 @@ CELL = 2.0
 
 # ---- experiment switches: set one to False to test without it
 FLEE_HP, FLEE_N = 0.3, 4    # the 2.79 setting (never flee scored 2.6)
-GUN_IDEAL = 90.0           # preferred fight range with the gun (was 50)
+GUN_IDEAL = 35.0           # preferred fight range with the gun (50 scored 2.77-2.79, 90 scored 2.67)
 DUAL_FIRE = True           # fire the gun at the same time as a laser/lightning
 USE_DROPS = True           # False = ignore supply drops (that scored 2.69, worse than 2.79)
 JUMP_FIGHT = False         # jump while fighting/fleeing
