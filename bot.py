@@ -14,8 +14,16 @@ import sys
 import mechfight as mf
 
 CELL = 2.0
+
+# ---- experiment switches: set one to False to test without it
+FLEE_HP, FLEE_N = 0.3, 4   # the 2.79 setting
+JUMP_FIGHT = True          # jump while fighting/fleeing
+LIGHTNING_FIRST = True     # prefer lightning over laser, and close in to ~22 m when holding it
+CUBE_FARM = True           # chase cubes, drones and crates from further away
+CUBE_RANGE = 140 if CUBE_FARM else 80
+FARM_RANGE = 90 if CUBE_FARM else 55
 TAU = math.tau
-WEAPON_VALUE = {"gun": 0.0, "mortar": 1.5, "lightning": 2.5, "laser": 3.0}
+WEAPON_VALUE = {"gun": 0.0, "mortar": 1.5, "lightning": 3.0 if LIGHTNING_FIRST else 2.5, "laser": 2.5 if LIGHTNING_FIRST else 3.0}
 UPGRADE_PRIORITY = ["armor", "plating", "nanites", "servos", "gyros", "gun_damage", "gun_rate",
                     "laser_damage", "laser_charge", "lightning_chain", "capacitor", "reactor", "jets",
                     "gun_mag", "gun_velocity", "mortar_splash", "sensors"]
@@ -301,9 +309,9 @@ class Bot:
         elif foes:
             target, kind_t = foes[0], "mech-nolos"
         elif not out_zone:
-            pool = [m for m in others if m["_d"] < 55 and self.los(me["pos"], m["pos"])]
+            pool = [m for m in others if m["_d"] < FARM_RANGE and self.los(me["pos"], m["pos"])]
             pool += [dict(c, _d=math.hypot(c["pos"][0] - x, c["pos"][1] - y), vel=[0, 0, 0]) for c in obs["crates"]
-                     if math.hypot(c["pos"][0] - x, c["pos"][1] - y) < 50 and self.los(me["pos"], c["pos"])]
+                     if math.hypot(c["pos"][0] - x, c["pos"][1] - y) < FARM_RANGE - 5 and self.los(me["pos"], c["pos"])]
             if pool:
                 target, kind_t = min(pool, key=lambda m: m["_d"]), "farm"
 
@@ -320,7 +328,7 @@ class Bot:
             if tick >= self.flip_at:
                 self.strafe = -self.strafe
                 self.flip_at = tick + self.rng.randint(6, 14)
-            if hpf < 0.15 or nf >= 6:
+            if hpf < FLEE_HP or nf >= FLEE_N:
                 mode = "flee"
                 add(away, 2.0)
                 add((dcx, dcy), 0.8)
@@ -331,7 +339,7 @@ class Bot:
                 ideal = 50.0
                 have = {w["kind"] for w in me["weapons"] if w}
                 if "lightning" in have:
-                    ideal = 28.0
+                    ideal = 22.0 if LIGHTNING_FIRST else 28.0
                 elif "laser" in have:
                     ideal = 80.0
                 if f["_d"] < ideal - 12:
@@ -365,7 +373,7 @@ class Bot:
                             best = (s, pos, "loot-" + k)
                 for i, pos in self.cb.items():
                     dd = math.hypot(pos[0] - x, pos[1] - y)
-                    if dd < 80 and math.hypot(pos[0] - zc[0], pos[1] - zc[1]) < zr:
+                    if dd < CUBE_RANGE and math.hypot(pos[0] - zc[0], pos[1] - zc[1]) < zr:
                         if best is None or dd < best[0]:
                             best = (dd, pos, "cube")
                 if best:
@@ -436,6 +444,8 @@ class Bot:
             act["move"] = [0.0, 0.0]
             self.prev_ang = None
         act["boost"] = bool(boost)
+        if JUMP_FIGHT and mode in ("fight", "flee") and me["grounded"] and tick % 8 == 0:
+            act["jump"] = True
 
         # -- aim and fire
         aim = None
